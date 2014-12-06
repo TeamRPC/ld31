@@ -1,0 +1,28 @@
+{
+    "healthy": {
+	"sx": 96,
+	"sy": 0,
+	"cols": 20,
+	"tilew": 32,
+	"tileh": 32,
+	"frames": 1
+
+    },
+    "diseased": {
+	"sx": 0,
+	"sy": 0,
+	"cols": 20,
+	"tilew": 32,
+	"tileh": 32,
+	"frames": 1
+
+    },
+    "dirty": {
+	"sx": 32,
+	"sy": 0,
+	"cols": 20,
+	"tilew": 32,
+	"tileh": 32,
+	"frames": 1
+    }
+}
