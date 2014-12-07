@@ -1,0 +1,15 @@
+Q.GameObject
+|- Q.Sprite
+
+
+
+Quintus sprite terminology
+
+sprite sheet/image asset
+   |
+|--^--|
+0123456 <-- image/sprite
+0123456
+0123456
+  ^
+  frame
