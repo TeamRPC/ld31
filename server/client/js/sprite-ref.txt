@@ -13,3 +13,37 @@ sprite sheet/image asset
 0123456
   ^
   frame
+  
+  
+
+
+stage far right border x: 992
+stage bottom border y: 608
+stage left border x: 96
+stage top border y: 0
+
+
+(player area, exluding borders)
+27 columns in maze
+18 rows in maze
+
+(player + boss area, exluding borders)
+30 columns
+18 rows
+
+
+
+
+---
+
+
+move to cursor
+
+                          |    . <-- (75, 75)
+                          |
+                   -------.--------   <-- (50, 50)
+                          |
+                          |
+                          
+                          
+                          
