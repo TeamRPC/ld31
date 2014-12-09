@@ -1,3 +1,5 @@
+var socket = io.connect('http://' + document.domain + ':' + location.port);
+
 var Q = Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch")
         .setup({width: 1024, height: 640, scaleToFit: true})
@@ -37,119 +39,11 @@ Q.MovingSprite.extend("Player",{
                 this.destroy();            
             }
         });
-        
-        
-        
     },
     
     step: function(dt) {
-                
-        // get x, y of playerCursor
-        // get x, y of cursor
-        // get delta x, delta y
-        // rads = arctan(deltaX, deltaY)
-        // degs = rads * 180/pi
-        
-        // find the angle playerCursor needs to travel 
-        // to get to cursor
-        // ---------------
-        
-        // if movement is in progress,
-        // see if we've reached the target
-        //this.p.moveInProgress;
-
-//    
-  
-        var speedMultiplier = 18;
-        var playerCursorX = this.p.x;
-        var playerCursorY = this.p.y;
-        var cursorX = Q.inputs['mouseX'];
-        var cursorY = Q.inputs['mouseY'];
-        
-        // if cursor is not in same position as player cursor
-        // start moving towards cursor
-        if (playerCursorX != cursorX && playerCursorY != cursorY) {
-            
-            //console.log('playerCursor not on cursor. ' + playerCursorX + ' ' + playerCursorY);
-            
-            // if playerCursor is not already moving towards
-            // cursor, start moving playerCursor
-            if (!this.p.moveInProgress) {
-                
-                //console.log('not already moving');
-                
-                var dir_x = cursorX - playerCursorX;
-                var dir_y = cursorY - playerCursorY;
-
-                this.p.vx = dir_x * speedMultiplier;
-                this.p.vy = dir_y * speedMultiplier;  
-                
-                this.p.moveInProgress = true;                
-                
-            }
-            // playerCursor is already moving towards cursor.
-            else {
-                // do nothing and let it keep moving.
-                // keep track of how many steps we've done since 
-                // playerCursor started moving towards cursor.
-  
-                this.p.moveStepsElapsed += 1;
-
-                // if the steps taken are greater than the allowed
-                // amount of steps, stop moving.
-                if (this.p.moveStepsElapsed >= this.p.moveStepsAllowed) {
-                    //console.log('youve had your chance');
-                    this.p.vx = 0;
-                    this.p.vy = 0;
-                    this.p.moveStepsElapsed = 0;
-                    this.p.moveInProgress = false;
-                }
-            }
-                
-            
-            // stop if it reached its original target.
-            // or if 30 steps have elapsed without
-            // reaching the target
-            if (playerCursorX == this.p.moveTargetX || playerCursorY == this.p.moveTargetY) {
-                
-                console.log('gaol reached');
-                this.p.vx = 0;
-                this.p.vy = 0;
-                this.p.moveInProgress = false;
-                
-            }
-        }
-        
-        // playerCursor is at same place as cursor
-//        else {
-//            console.log('MATCHED');
-//        }
-            
-
-//    
-//        var deltaX = playerCursorX - Q.inputs['mouseX'];
-//        var deltaY = playerCursorY - Q.inputs['mouseY'];
-//        
-//        var rads = Math.atan2(deltaY, deltaX);
-//        var degrees = rads * 180 / Math.PI;
-//        
-//        this.p.angle = degrees;
-        // ---------------
-    
-            
-            
-            //        var theta = Math.ata2(        
-        // move sprite to x, y pos of cursor
-        // if cursor has moved since last step
-//        var nowx = Q.inputs['mouseX'];
-//        var nowy = Q.inputs['mouseY'];
-//        if (nowx != this.p.lastx || nowy != this.p.lasty) {
-          //  this.p.x = Q.inputs['mouseX'] + 16;
-          //  this.p.y = Q.inputs['mouseY'] + 16;
-//            this.p.lastx = nowx;
-//            this.p.lasty = nowy;
-//        }
-        
+        this.p.x = Q.inputs['mouseX'];
+        this.p.y = Q.inputs['mouseY'];
     }    
 });
 
@@ -172,6 +66,29 @@ Q.Sprite.extend("Button", {
         });
     }
 });
+
+Q.Sprite.extend("Trap", {
+   init: function(p) {
+       this._super(p, {
+           sheet: 'tiles',
+           type: Q.SPRITE_UI
+       });
+       
+       this.on("touch", function(t) {
+           console.log('u dead');
+       });
+   }
+});
+
+Q.Sprite.extend("Spike", {
+    init: function(p) {
+        this._super(p, {
+            sheet: 'tiles',
+            type: Q.SPRITE_ENEMY
+        });
+    }
+});
+
 
 Q.Sprite.extend("Enemy",{
   init: function(p) {
