@@ -1,28 +1,83 @@
 {
     "healthy": {
-	"sx": 64,
-	"sy": 0,
-	"cols": 20,
-	"tilew": 32,
-	"tileh": 32,
-	"frames": 1
-
+        "sx": 64,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
     },
+    
     "diseased": {
-	"sx": 0,
-	"sy": 0,
-	"cols": 20,
-	"tilew": 32,
-	"tileh": 32,
-	"frames": 1
-
+        "sx": 0,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
     },
+    
     "dirty": {
-	"sx": 32,
-	"sy": 0,
-	"cols": 20,
-	"tilew": 32,
-	"tileh": 32,
-	"frames": 1
+        "sx": 32,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    
+    "moldy": {
+        "sx": 96,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    
+    "spikes": {
+        "sx": 128,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1        
+    },
+    
+    "poopy": {
+        "sx": 160,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1        
+    },
+    
+    "greenrod": {
+        "sx": 192,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1        
+    },
+    
+    "exotic": {
+        "sx": 224,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1        
+    },
+    
+    "ghost": {
+        "sx": 256,
+        "sy": 0,
+        "cols": 20,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
     }
+    
 }
