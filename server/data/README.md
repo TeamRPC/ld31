@@ -1,0 +1,1 @@
+generated mazes are saved here

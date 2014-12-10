@@ -15,31 +15,34 @@
 
 // Thank you http://www.roguebasin.com/index.php?title=Simple_maze for blowing my mind
 
-var levelColumns = 27;
-var levelRows = 18;
-var level = [];
-var randomDir;
-var tilesDone = 0;
-var x;
-var y;
-var cX;
-var cY;
-var row;
-var col;
-var attempt;
-var deadEndFound;
-
-var up =    [0, -1];
-var down =  [0, 1];
-var left =  [-1, 0];
-var right = [1, 0];
-
-var creationDirection = [[0, 0], [0, 0], [0, 0], [0, 0]];
-
-
 
 var maze = {
+
+ 
+    
     generate: function() {
+        
+        var levelColumns = 27;
+        var levelRows = 18;
+        var level = [];
+        var randomDir;
+        var tilesDone = 0;
+        var x;
+        var y;
+        var cX;
+        var cY;
+        var row;
+        var col;
+        var attempt;
+        var deadEndFound;
+
+        var up =    [0, -1];
+        var down =  [0, 1];
+        var left =  [-1, 0];
+        var right = [1, 0];
+
+        var creationDirection = [[0, 0], [0, 0], [0, 0], [0, 0]];
+
         // create empty level
         for (row = 0; row <= levelRows; row += 1) {
             // create columns
@@ -122,6 +125,21 @@ var maze = {
                 }
             }
         }
+        
+        // invert all 1s and 0s because quintus interprets 0s as walkways, 1s as walls.
+        for (row = 0; row <= levelRows; row += 1) {
+            for (col = 0; col <= levelColumns; col += 1) {
+                // create 0s in all tiles
+                if (level[row][col] === 0) {
+                    level[row][col] = 1;
+                }
+                else if (level[row][col] === 1) {
+                    level[row][col] = 0;
+                }
+            }
+        }
+        
+        
         return level;
     //    console.log('tiles done: ' + tilesDone);
     //    console.log(JSON.stringify(level));

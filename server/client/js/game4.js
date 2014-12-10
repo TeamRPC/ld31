@@ -1,21 +1,25 @@
 
 
 
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+var Q = Quintus({
+    dataPath: 'http://' + document.domain + ':' + location.port + '/data/'
+})
+    .include("Sprites, Scenes, Input, 2D, Touch, UI")
+    .setup({width: 1024, height: 640, scaleToFit: true})
+    .controls()
+    .touch();
 
-socket.on('join', function(player) {
-   console.log('player ' + player.id + ' joined with ' + player.cursor + '. msg: ' + player.msg + ' ' + player.nextRound);
-});
-
-
-var Q = Quintus()
-        .include("Sprites, Scenes, Input, 2D, Touch, UI")
-        .setup({width: 1024, height: 640, scaleToFit: true})
-        .controls().touch()
 
 Q.input.mouseControls();
 Q.gravityY = 0;
 Q.gravityX = 0;
+
+
+
+
+
+
+
 
 Q.Sprite.extend("GhostPlayer", {
    init: function(p) {
@@ -39,30 +43,40 @@ Q.MovingSprite.extend("Player",{
             sheet: "healthy", 
             x: 410,
             y: 90,
-            cx: 0,
-            cy: 0,
+            cx: 16,
+            cy: 16,
+            scale: 0.5,
             type: Q.SPRITE_FRIENDLY,
-            collisionMask: Q.SPRITE_ENEMY,
-
+            
+            followCursor: true,
+            collisionWarning: false
         });
         this.add('mouseControls, 2d');
-
-        this.on("hit.sprite",function(collision) {
-            //console.dir(collision.obj);
-            if(collision.obj.isA("Tower")) {
-                Q.stageScene("endGame",1, { label: "You Won!" }); 
-                this.destroy();
-            }
-            else if (collision.obj.isA("Spike")) {
+        this.on("hit", this,"collision");
+        this.on("hit.sprite", function(collision) {
+            if (collision.obj.isA("Spike")) {
                 Q.stageScene("endGame",1, { label: "You got hit by spikes" });
                 this.destroy();            
             }
         });
     },
 
+    collision: function(col) {
+        // .. do anything custom you need to do ..
+        // Move the sprite away from the collision
+        this.p.followCursor = false;
+        console.dir(col.separate);
+        this.p.x -= col.separate[0];
+        this.p.y -= col.separate[1];
+        console.log('col');
+    },
+
     step: function(dt) {
-        this.p.x = Q.inputs['mouseX'];
-        this.p.y = Q.inputs['mouseY'];
+        // follow mouse if mouse isn't going through wall
+        if (!this.p.collisionWarning) {
+            this.p.x = Q.inputs['mouseX'];
+            this.p.y = Q.inputs['mouseY'];
+        }
     }    
 });
 
@@ -156,8 +170,7 @@ Q.Sprite.extend("Spike", {
     }
 });
 
-
-Q.Sprite.extend("Enemy",{
+Q.Sprite.extend("Enemy", {
   init: function(p) {
     this._super(p, { sheet: 'enemy', vx: 100 });
     this.add('2d, aiBounce');
@@ -178,15 +191,13 @@ Q.Sprite.extend("Enemy",{
   }
 });
 
-Q.scene("level1",function(stage) {
 
-    // get map from server
-    var border = stage.collisionLayer(new Q.TileLayer({ 
-        dataAsset: 'level.json',
-        sheet: 'tiles' }));
-    //border.p.y -= 9;
-    //border.p.x += 41;
 
+Q.scene("level1", function(stage) {
+    //var net = stage.insert(new Q.Netty());
+    
+
+                   
     var trapButton1 = stage.insert(new Q.Button({
         x: 32*1+16, 
         y: 32*1+16,
@@ -233,38 +244,70 @@ Q.scene("level1",function(stage) {
         x: 32*30+16,
         y: 32*5+16
     }));
-
-    stage.insert(new Q.Enemy({ x: 700, y: 0 }));
-    stage.insert(new Q.Enemy({ x: 800, y: 0 }));
-    stage.insert(new Q.Tower({ x: 180, y: 50 }));
 });
 
-Q.scene('endGame',function(stage) {
+Q.scene('endGame', function(stage) {
     var player = stage.insert(new Q.GhostPlayer());
 
+    var box = stage.insert(new Q.UI.Container({
+        x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+    }));
 
-  var box = stage.insert(new Q.UI.Container({
-    x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
-  }));
-
-  var button = box.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
+    var button = box.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
                                            label: "Play Again" }))         
-  var label = box.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
+    var label = box.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
                                         label: stage.options.label }));
-  button.on("click",function() {
-    Q.clearStages();
-    Q.stageScene('level1');
-  });
-  box.fit(20);
+    button.on("click", function() {
+        Q.clearStages();
+        Q.stageScene('level1');
+        });
+    box.fit(20);
 });
 
-Q.load("cursors.png, cursors.json, level.json, tiles.png", function() {
-  Q.sheet("tiles","tiles.png", { tilew: 32, tileh: 32 });
-  Q.compileSheets("cursors.png","cursors.json");
-  Q.stageScene("level1");
+
+var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+socket.on('join', function(join) {
+    console.log('player ' + join.id + ' joined with ' + join.cursor + '. msg: ' + join.msg + ' ' + join.nextRound);
+        //        var box = Q.stage(0).insert(new Q.UI.Container({
+        //            x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+        //        }));
+        //        var label = box.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
+        //                                        label: join.msg }));
 });
+
+// get map from server
+socket.on("start", function(round) {
+    console.log('start signal received');
+
+    console.log(round.levelName);
+    // Save level to the current session's store
+
+    // download and cache level
+    //mazeUrl = 'http://' + document.domain + ':' + location.port + '/data/' + round.levelName;
+
+    // load the level
+    Q.load(round.levelName, function() {
+        Q.stageScene("level1");
+        var border = Q.scene(0).collisionLayer(new Q.TileLayer({ 
+            dataAsset: round.levelName,
+            sheet: 'tiles',
+        }));
+    });
+});
+
+Q.load("cursors.png, cursors.json, tiles.png", function() {
+    Q.sheet("tiles", "tiles.png", { tilew: 32, tileh: 32 });
+    Q.compileSheets("cursors.png", "cursors.json");
+});
+
+Quintus.Netty = function(Q) {
+    Q.connect = function() {
+        return io.connect('http://' + document.domain + ':' + location.port);
+    }
+};
 
 
 document.addEventListener('beforeunload', function() {
-   socket.close(); 
+    socket.close(); 
 });

@@ -1,3 +1,6 @@
+# generated mazes
+maze-*.json
+
 # Logs
 logs
 *.log
